@@ -1,27 +1,72 @@
 package com.digantjagtap.stockalerts
 
+import android.content.Intent
+import android.content.res.TypedArray
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import com.digantjagtap.stockalerts.Adapter.ListViewAdapter
+import com.digantjagtap.stockalerts.Database.DBHelper
+import com.digantjagtap.stockalerts.Model.Alert
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.io.IOException
+import java.util.*
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+
+    private var listView: ListView? = null
+    internal var allAlerts: TypedArray? = null
+    internal lateinit var dbHelper: DBHelper
+    internal lateinit var alertsList: ArrayList<Alert>
+    internal lateinit var listViewAdapter: ListViewAdapter
+
+    private var alertTableName = "alert"
+
+    internal lateinit var adapter: ArrayAdapter<Alert>
+    // List view
+    private var lv: ListView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        try {
+            // Get Instance of DB
+            dbHelper = DBHelper.getInstance(this@MainActivity)
+            dbHelper.onCreateAlertTable(alertTableName)
+        } catch (e: IOException) {
+            Log.e("error", "DBHelper getInstance error")
         }
+
+        // Bind to our new adapter.
+        lv = findViewById<ListView>(R.id.listview)
+        adapter = ArrayAdapter<Alert>(this, R.layout.item_alert, alertsList)
+
+        setAdapter()
+
+        // Function onClick after addAlert button press
+        fab.setOnClickListener {
+            val intent = Intent(this, AddAlertActivity::class.java)
+            startActivity(intent)
+            // Notification bottom Snacks
+//            view ->
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
+        }
+
+
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -29,6 +74,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+    }
+
+
+    private fun setAdapter() {
+
+        // Getting Alerts
+        try {
+            alertsList = getAlerts()
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+        }
+
+
+        listViewAdapter = ListViewAdapter(this@MainActivity, alertsList)
+        lv?.setAdapter(listViewAdapter)
+        lv?.setTextFilterEnabled(true)
+        lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+//            val intent = Intent(view.context, MemoUpdateActivity::class.java)
+//            intent.putExtra("memo", memosList.get(position))
+//            //intent.putExtra("memoId", memosList.get(position).getMemoId());
+//            intent.putExtra("userEmail", HomeActivity.getInstance().getIntent().getStringExtra("userEmail"))
+//            // listView.getItemAtPosition(position)
+//            startActivity(intent)
+        })
+
+//        setupSearchView()
+
+    }
+
+    // Function to retrieve Alerts from DB
+    private fun getAlerts(): ArrayList<Alert> {
+        // Querying Alerts
+        val tempAlertsList = ArrayList<Alert>()
+        try {
+
+            val alerts = dbHelper.getAlerts()
+
+            val i = 0
+            for (alert in alerts) {
+                tempAlertsList.add(alert)
+            }
+            return tempAlertsList
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+        }
+
+        return tempAlertsList
     }
 
     override fun onBackPressed() {

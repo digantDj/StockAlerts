@@ -9,13 +9,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <symbol android:name="android.intent.symbol.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.IOT_LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <symbol android:name="android.intent.symbol.IOT_LAUNCHER" />
+                <symbol android:name="android.intent.symbol.DEFAULT" />
             </intent-filter>
         </activity>
     </application>
