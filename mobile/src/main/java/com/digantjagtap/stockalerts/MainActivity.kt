@@ -16,19 +16,25 @@ import android.widget.ListView
 import com.digantjagtap.stockalerts.Adapter.ListViewAdapter
 import com.digantjagtap.stockalerts.Database.DBHelper
 import com.digantjagtap.stockalerts.Model.Alert
+import com.digantjagtap.stockalerts.R.id.drawer_layout
+import io.vrinda.kotlinpermissions.PermissionCallBack
+import io.vrinda.kotlinpermissions.PermissionsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.IOException
 import java.util.*
+import android.Manifest
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+
+class MainActivity :  NavigationView.OnNavigationItemSelectedListener, PermissionsActivity() {
 
 
     private var listView: ListView? = null
     internal var allAlerts: TypedArray? = null
     internal lateinit var dbHelper: DBHelper
-    internal lateinit var alertsList: ArrayList<Alert>
+    internal var alertsList: ArrayList<Alert> = ArrayList<Alert>()
     internal lateinit var listViewAdapter: ListViewAdapter
 
     private var alertTableName = "alert"
@@ -37,10 +43,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // List view
     private var lv: ListView? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+
+            requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, object : PermissionCallBack {
+                override fun permissionGranted() {
+                    super.permissionGranted()
+
+                }
+
+                override fun permissionDenied() {
+                    super.permissionDenied()
+                    return;
+                }
+            })
+
 
         try {
             // Get Instance of DB

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import android.widget.ToggleButton
 import com.digantjagtap.stockalerts.Database.DBHelper
 import com.digantjagtap.stockalerts.Model.Alert
@@ -21,7 +22,7 @@ class AddAlertActivity : AppCompatActivity() {
 
     internal lateinit var symbolEditText: EditText
     internal lateinit var alertValueEditText: EditText
-    internal lateinit var statusSwitch: ToggleButton
+    internal lateinit var statusSwitch: Switch
     internal lateinit var save: Button
     internal lateinit var alert: Alert
     private var maxAlertId = 0
@@ -34,7 +35,7 @@ class AddAlertActivity : AppCompatActivity() {
         // Retrieving the elements from layout
         symbolEditText = findViewById<EditText>(R.id.symbolEditText)
         alertValueEditText = findViewById<EditText>(R.id.alertValueEditText)
-        statusSwitch = findViewById<ToggleButton>(R.id.statusSwitch)
+        statusSwitch = findViewById<Switch>(R.id.statusSwitch)
         save = findViewById<Button>(R.id.saveButton)
 
         // Initializing the alert object
